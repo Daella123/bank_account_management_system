@@ -298,40 +298,7 @@ The application initializes with 5 sample accounts:
    - Failed transactions do not affect account balance
    - Transaction history maintained chronologically
 
-## Future Enhancements
 
-Potential improvements for the system:
-
-1. **Persistence**
-   - Database integration (MySQL, PostgreSQL)
-   - File-based storage (CSV, JSON, XML)
-
-2. **Advanced Features**
-   - Interest calculation and automatic application
-   - Monthly fee processing
-   - Account statements generation
-   - Fund transfers between accounts
-
-3. **Data Structures**
-   - HashMap for O(1) account lookups
-   - ArrayList for dynamic sizing
-   - TreeMap for sorted transaction history
-
-4. **Security**
-   - Customer authentication (PIN/Password)
-   - Transaction authorization levels
-   - Audit logging
-
-5. **User Interface**
-   - JavaFX GUI application
-   - Web interface (Spring Boot + React)
-   - Mobile app integration
-
-6. **Reporting**
-   - Account summary reports
-   - Transaction analytics
-   - Balance projections
-   - Interest earned reports
 
 ## Learning Objectives Achieved
 
