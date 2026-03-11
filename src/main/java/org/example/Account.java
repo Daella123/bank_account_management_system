@@ -1,6 +1,6 @@
 package org.example;
 
-public abstract class Account {
+public abstract class Account implements Transactable {
     private static int accountCounter = 0;
     
     private String accountNumber;
@@ -59,6 +59,22 @@ public abstract class Account {
             balance -= amount;
             return true;
         }
+        return false;
+    }
+    
+    // Transactable interface implementation
+    @Override
+    public boolean processTransaction(double amount, String type) {
+        if (type == null) {
+            return false;
+        }
+        
+        if (type.equalsIgnoreCase("deposit") || type.equalsIgnoreCase("DEPOSIT")) {
+            return deposit(amount);
+        } else if (type.equalsIgnoreCase("withdrawal") || type.equalsIgnoreCase("WITHDRAWAL")) {
+            return withdraw(amount);
+        }
+        
         return false;
     }
     
