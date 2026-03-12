@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 public abstract class Customer {
     private static int customerCounter = 0;

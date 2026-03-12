@@ -1,4 +1,8 @@
-package org.example;
+package org.example.service;
+
+import org.example.model.Account;
+import org.example.model.CheckingAccount;
+import org.example.model.SavingsAccount;
 
 public class AccountManager {
     private Account[] accounts;

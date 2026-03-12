@@ -1,4 +1,6 @@
-package org.example;
+package org.example.model;
+
+import org.example.contract.Transactable;
 
 public abstract class Account implements Transactable {
     private static int accountCounter = 0;

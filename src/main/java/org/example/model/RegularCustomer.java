@@ -1,4 +1,6 @@
-package org.example;
+package org.example.model;
+
+import org.example.model.Customer;
 
 public class RegularCustomer extends Customer {
     

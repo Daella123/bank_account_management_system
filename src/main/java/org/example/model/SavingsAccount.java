@@ -1,4 +1,7 @@
-package org.example;
+package org.example.model;
+
+import org.example.model.Account;
+import org.example.model.Customer;
 
 public class SavingsAccount extends Account {
     private double interestRate;

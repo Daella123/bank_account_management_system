@@ -1,5 +1,9 @@
 package org.example;
 
+import org.example.model.*;
+import org.example.service.AccountManager;
+import org.example.service.TransactionManager;
+
 import java.util.Scanner;
 
 public class Main {
@@ -110,7 +114,7 @@ public class Main {
         System.out.println("\nCustomer type:");
         System.out.println("1. Regular Customer (Standard banking services)");
         System.out.println("2. Premium Customer (Enhanced benefits, min balance $10,000)");
-        int customerType = getIntInput("Select type (1-2): ");
+        int customerType = getIntInputInRange("Select type (1-2): ", 1, 2);
         
         Customer customer;
         if (customerType == 2) {
@@ -123,7 +127,7 @@ public class Main {
         System.out.println("\nAccount type:");
         System.out.println("1. Savings Account (Interest: 3.5%, Min Balance: $500)");
         System.out.println("2. Checking Account (Overdraft: $1,000, Monthly Fee: $10)");
-        int accountType = getIntInput("Select type (1-2): ");
+        int accountType = getIntInputInRange("Select type (1-2): ", 1, 2);
         
         // Get initial deposit
         double initialDeposit = getDoubleInput("Enter initial deposit amount: $");
@@ -175,7 +179,7 @@ public class Main {
         System.out.println("\nTransaction type:");
         System.out.println("1. Deposit");
         System.out.println("2. Withdrawal");
-        int transactionType = getIntInput("Select type (1-2): ");
+        int transactionType = getIntInputInRange("Select type (1-2): ", 1, 2);
         
         double amount = getDoubleInput("Enter amount: $");
         
@@ -256,6 +260,16 @@ public class Main {
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a valid number.");
             }
+        }
+    }
+    
+    private static int getIntInputInRange(String prompt, int min, int max) {
+        while (true) {
+            int value = getIntInput(prompt);
+            if (value >= min && value <= max) {
+                return value;
+            }
+            System.out.println("Invalid choice. Please enter a number between " + min + " and " + max + ".");
         }
     }
     
