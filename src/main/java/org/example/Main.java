@@ -52,27 +52,27 @@ public class Main {
         // Create 5 sample accounts (3 Savings, 2 Checking)
         
         // Account 1: Savings - Regular Customer
-        Customer customer1 = new RegularCustomer("John Smith", 35, "+1-555-1234", "123 Main Street, Springfield");
+        Customer customer1 = new RegularCustomer("Mpamo Avy", 35, "+250-789-331-259", "KG 480, kigali");
         Account account1 = new SavingsAccount(customer1, 5250.0);
         accountManager.addAccount(account1);
         
         // Account 2: Checking - Regular Customer
-        Customer customer2 = new RegularCustomer("Sarah Johnson", 28, "+1-555-2345", "456 Oak Avenue, Springfield");
+        Customer customer2 = new RegularCustomer("Igabe Lanuja", 28, "+250-782-471-299", "KG 340, kigali");
         Account account2 = new CheckingAccount(customer2, 3450.0);
         accountManager.addAccount(account2);
         
         // Account 3: Savings - Premium Customer
-        Customer customer3 = new PremiumCustomer("Michael Chen", 45, "+1-555-3456", "789 Pine Road, Springfield");
+        Customer customer3 = new PremiumCustomer("Bigwi Axel", 45, "+250-781-437-239", "KG 261, kigali");
         Account account3 = new SavingsAccount(customer3, 15750.0);
         accountManager.addAccount(account3);
         
         // Account 4: Checking - Regular Customer
-        Customer customer4 = new RegularCustomer("Emily Brown", 31, "+1-555-4567", "321 Elm Street, Springfield");
+        Customer customer4 = new RegularCustomer("Ineza Annick", 31, "+250-788-831-282", "KG 453, kigali");
         Account account4 = new CheckingAccount(customer4, 880.0);
         accountManager.addAccount(account4);
         
         // Account 5: Savings - Premium Customer
-        Customer customer5 = new PremiumCustomer("David Wilson", 52, "+1-555-5678", "654 Maple Drive, Springfield");
+        Customer customer5 = new PremiumCustomer("Nkota Leslie", 52, "+250-788-301-245", "KG 367, kigali");
         Account account5 = new SavingsAccount(customer5, 25200.0);
         accountManager.addAccount(account5);
     }
@@ -142,26 +142,7 @@ public class Main {
         System.out.println("\n" + "=".repeat(50));
         System.out.println("Account created successfully!");
         System.out.println("=".repeat(50));
-        System.out.println("Account Number: " + account.getAccountNumber());
-        System.out.println("Customer: " + customer.getName() + " (" + customer.getCustomerType() + ")");
-        System.out.println("Account Type: " + account.getAccountType());
-        System.out.println("Initial Balance: $" + String.format("%,.2f", initialDeposit));
-        
-        if (account instanceof SavingsAccount) {
-            SavingsAccount savingsAccount = (SavingsAccount) account;
-            System.out.println("Interest Rate: " + savingsAccount.getInterestRate() + "%");
-            System.out.println("Minimum Balance: $" + String.format("%,.2f", savingsAccount.getMinimumBalance()));
-        } else if (account instanceof CheckingAccount) {
-            CheckingAccount checkingAccount = (CheckingAccount) account;
-            if (customer instanceof PremiumCustomer) {
-                System.out.println("Monthly Fee: WAIVED");
-            } else {
-                System.out.println("Monthly Fee: $" + String.format("%.2f", checkingAccount.getMonthlyFee()));
-            }
-            System.out.println("Overdraft Limit: $" + String.format("%,.2f", checkingAccount.getOverdraftLimit()));
-        }
-        
-        System.out.println("Status: " + account.getStatus());
+        account.displayAccountDetails();
         System.out.println("=".repeat(50));
     }
     
@@ -203,19 +184,9 @@ public class Main {
             return;
         }
         
-        String type;
+        String type = (transactionType == 1) ? "DEPOSIT" : "WITHDRAWAL";
         double previousBalance = account.getBalance();
-        boolean success = false;
-        
-        if (transactionType == 1) {
-            // Deposit
-            type = "DEPOSIT";
-            success = account.deposit(amount);
-        } else {
-            // Withdrawal
-            type = "WITHDRAWAL";
-            success = account.withdraw(amount);
-        }
+        boolean success = account.processTransaction(amount, type);
         
         if (!success) {
             System.out.println("\nError: Transaction failed!");
@@ -236,15 +207,8 @@ public class Main {
         
         // Display confirmation
         System.out.println("\n" + "=".repeat(50));
-        System.out.println("TRANSACTION CONFIRMATION");
-        System.out.println("=".repeat(50));
-        System.out.println("Transaction ID: " + transaction.getTransactionId());
-        System.out.println("Account: " + accountNumber);
-        System.out.println("Type: " + type);
-        System.out.println("Amount: $" + String.format("%,.2f", amount));
+        transaction.displayTransactionDetails();
         System.out.println("Previous Balance: $" + String.format("%,.2f", previousBalance));
-        System.out.println("New Balance: $" + String.format("%,.2f", account.getBalance()));
-        System.out.println("Date/Time: " + transaction.getTimestamp());
         System.out.println("=".repeat(50));
         
         System.out.print("\nConfirm transaction? (Y/N): ");
@@ -255,11 +219,8 @@ public class Main {
             System.out.println("\nTransaction completed successfully!");
         } else {
             // Rollback transaction
-            if (transactionType == 1) {
-                account.withdraw(amount);
-            } else {
-                account.deposit(amount);
-            }
+            String rollbackType = (transactionType == 1) ? "WITHDRAWAL" : "DEPOSIT";
+            account.processTransaction(amount, rollbackType);
             System.out.println("\nTransaction cancelled.");
         }
     }
