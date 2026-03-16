@@ -1,303 +1,165 @@
 # Bank Account Management System
 
-A comprehensive console-based banking application built with Java that demonstrates Object-Oriented Programming (OOP) principles, inheritance, polymorphism, and basic Data Structures & Algorithms (DSA) concepts.
+A console-based **Bank Account Management System** built in Java 21.
+This is the **Lab 2** version, which extends Lab 1 with:
 
-## Project Overview
+- ✅ **Clean Code Refactoring** — modular methods, JavaDoc, Google Java Style Guide
+- ✅ **Custom Exception Handling** — 4 custom exception classes
+- ✅ **JUnit 5 Unit Tests** — 3 test classes, 20+ test cases
+- ✅ **Enhanced Console UI** — 5-option menu with emoji error messages
 
-This project implements a complete bank account management system with multiple account types, customer categories, transaction processing, and comprehensive reporting features.
-
-**Complexity:** Medium  
-**Estimated Development Time:** 10 hours
-
-## Features
-
-### Core Functionality
-
-1. **Account Management**
-   - Create new bank accounts with customer information
-   - View all accounts with comprehensive details
-   - Support for multiple account types (Savings, Checking)
-   - Auto-generated unique account numbers
-
-2. **Transaction Processing**
-   - Deposit money to accounts
-   - Withdraw money with proper validation
-   - Transaction confirmation workflow
-   - Complete transaction history tracking
-
-3. **Customer Types**
-   - **Regular Customer**: Standard banking services
-   - **Premium Customer**: Enhanced benefits, waived fees, minimum balance $10,000
-
-4. **Account Types**
-   - **Savings Account**: 
-     - Interest rate: 3.5% annually
-     - Minimum balance requirement: $500
-   - **Checking Account**: 
-     - Overdraft limit: $1,000
-     - Monthly fee: $10 (waived for Premium customers)
-
-5. **Transaction History**
-   - View complete transaction history by account
-   - Display summary statistics (total deposits, withdrawals, net change)
-   - Reverse chronological order (newest first)
-
-## Technology Stack
-
-- **Language:** Java
-- **Build Tool:** Maven
-- **JDK Version:** Compatible with Java 8+
-- **IDE:** IntelliJ IDEA (or any Java IDE)
+---
 
 ## Project Structure
 
 ```
-bankAccountManagement/
-├── src/
-│   └── main/
-│       └── java/
-│           └── org/
-│               └── example/
-│                   ├── Main.java
-│                   ├── Account.java (abstract)
-│                   ├── SavingsAccount.java
-│                   ├── CheckingAccount.java
-│                   ├── Customer.java (abstract)
-│                   ├── RegularCustomer.java
-│                   ├── PremiumCustomer.java
-│                   ├── Transactable.java (interface)
-│                   ├── Transaction.java
-│                   ├── AccountManager.java
-│                   └── TransactionManager.java
-├── pom.xml
-└── README.md
+src/
+├── main/java/org/example/
+│   ├── Main.java                          ← Entry point (5-option menu)
+│   ├── contract/
+│   │   └── Transactable.java
+│   ├── model/
+│   │   ├── Account.java                   ← Abstract base class (refactored)
+│   │   ├── SavingsAccount.java            ← Enforces minimum balance
+│   │   ├── CheckingAccount.java           ← Supports overdraft
+│   │   ├── Customer.java
+│   │   ├── RegularCustomer.java
+│   │   ├── PremiumCustomer.java
+│   │   ├── Transaction.java
+│   │   └── exceptions/
+│   │       ├── InvalidAmountException.java
+│   │       ├── InsufficientFundsException.java
+│   │       ├── InvalidAccountException.java
+│   │       └── OverdraftExceededException.java
+│   ├── service/
+│   │   ├── AccountManager.java            ← Manages account storage
+│   │   ├── TransactionManager.java        ← Handles all financial operations
+│   │   └── StatementGenerator.java        ← Generates formatted statements
+│   └── utils/
+│       └── ValidationUtils.java           ← Reusable validation helpers
+│
+└── test/java/org/example/
+    ├── AccountTest.java                   ← 11 tests for Account hierarchy
+    ├── TransactionManagerTest.java        ← 9 tests for TransactionManager
+    └── ExceptionTest.java                 ← 13 tests for all custom exceptions
+
+docs/
+└── git-workflow.md                        ← Full Git branching strategy
 ```
 
-## Class Architecture
+---
 
-### 1. Customer Hierarchy
+## Features
 
-#### Customer (Abstract Class)
-- **Fields:** customerId, name, age, contact, address
-- **Static Field:** customerCounter (for unique ID generation)
-- **Abstract Methods:** 
-  - `displayCustomerDetails()`
-  - `getCustomerType()`
+| Feature | Description |
+|---------|-------------|
+| Create Accounts | Savings or Checking, Regular or Premium customers |
+| Deposit | Validates positive amounts, throws `InvalidAmountException` |
+| Withdraw | Enforces min balance (Savings) / overdraft limit (Checking) |
+| Transfer | Between two accounts atomically, records both sides |
+| Statement | Reverse chronological history + summary totals |
+| Error Handling | All errors shown as `❌ Error: <message>` in console |
+| Run Tests | Simulated JUnit output in console; real tests via `mvn test` |
 
-#### RegularCustomer extends Customer
-- Standard banking services
-- No special privileges
+---
 
-#### PremiumCustomer extends Customer
-- **Additional Field:** minimumBalance ($10,000)
-- **Special Method:** `hasWaivedFees()` - returns true
-- Enhanced benefits and priority service
+## Custom Exceptions
 
-### 2. Account Hierarchy
+| Exception | When Thrown |
+|-----------|-------------|
+| `InvalidAmountException` | Amount is zero or negative |
+| `InsufficientFundsException` | Savings withdrawal below minimum balance |
+| `OverdraftExceededException` | Checking withdrawal exceeds overdraft limit |
+| `InvalidAccountException` | Account number not found |
 
-#### Account (Abstract Class)
-- **Fields:** accountNumber, customer, balance, status
-- **Static Field:** accountCounter (for unique ID generation)
-- **Methods:** 
-  - `deposit(double amount)`
-  - `withdraw(double amount)`
-- **Abstract Methods:**
-  - `displayAccountDetails()`
-  - `getAccountType()`
+---
 
-#### SavingsAccount extends Account
-- **Fields:** interestRate (3.5%), minimumBalance ($500)
-- **Override:** `withdraw()` - enforces minimum balance
-- **Special Method:** `calculateInterest()`
-
-#### CheckingAccount extends Account
-- **Fields:** overdraftLimit ($1,000), monthlyFee ($10)
-- **Override:** `withdraw()` - allows overdraft
-- **Special Method:** `applyMonthlyFee()` - waived for Premium customers
-
-### 3. Transaction System
-
-#### Transactable (Interface)
-- **Method:** `processTransaction(double amount, String type)`
-
-#### Transaction (Class)
-- **Fields:** transactionId, accountNumber, type, amount, balanceAfter, timestamp
-- **Static Field:** transactionCounter (for unique ID generation)
-- Auto-generates transaction ID and timestamp
-
-### 4. Management Classes
-
-#### AccountManager
-- **Data Structure:** Account array (size 50)
-- **Methods:**
-  - `addAccount(Account)` - Add new account
-  - `findAccount(String)` - Linear search to find account by ID
-  - `viewAllAccounts()` - Display all accounts in tabular format
-  - `getTotalBalance()` - Calculate total bank balance
-  - `getAccountCount()` - Get number of accounts
-
-#### TransactionManager
-- **Data Structure:** Transaction array (size 200)
-- **Methods:**
-  - `addTransaction(Transaction)` - Record new transaction
-  - `viewTransactionsByAccount(String)` - Display transaction history
-  - `calculateTotalDeposits(String)` - Sum all deposits
-  - `calculateTotalWithdrawals(String)` - Sum all withdrawals
-
-## OOP Principles Demonstrated
-
-1. **Encapsulation**
-   - Private fields with public getters/setters
-   - Protected balance modification methods
-
-2. **Inheritance**
-   - Customer hierarchy (Customer → RegularCustomer/PremiumCustomer)
-   - Account hierarchy (Account → SavingsAccount/CheckingAccount)
-
-3. **Polymorphism**
-   - Method overriding (`displayAccountDetails()`, `withdraw()`)
-   - Abstract classes and methods
-   - Interface implementation (Transactable)
-
-4. **Abstraction**
-   - Abstract classes (Account, Customer)
-   - Interface (Transactable)
-
-5. **Composition**
-   - AccountManager has Account array
-   - TransactionManager has Transaction array
-   - Account has Customer reference
-
-6. **Static Members**
-   - Static counters for unique ID generation
-   - Shared across all instances
-
-## Data Structures & Algorithms
-
-1. **Arrays**
-   - Account storage (fixed size: 50)
-   - Transaction storage (fixed size: 200)
-
-2. **Linear Search**
-   - Finding accounts by account number: O(n)
-   - Finding transactions by account number: O(n)
-
-3. **Time Complexity Considerations**
-   - Account lookup: O(n) - linear search through account array
-   - Transaction history: O(n) - linear search through transaction array
-   - Add operations: O(1) - append to array
-
-## How to Run
+## Running the Application
 
 ### Prerequisites
-- Java Development Kit (JDK) 8 or higher
-- Maven (optional, for build management)
+- Java 21 (JDK)
+- Apache Maven 3.8+
+- IntelliJ IDEA (recommended)
 
-### Running the Application
-
-#### Using IDE (IntelliJ IDEA, Eclipse, etc.)
-1. Open the project in your IDE
-2. Navigate to `src/main/java/org/example/Main.java`
-3. Run the `Main` class
-
-#### Using Command Line
-
-1. **Compile the project:**
-   ```bash
-   javac -d target/classes src/main/java/org/example/*.java
-   ```
-
-2. **Run the application:**
-   ```bash
-   java -cp target/classes org.example.Main
-   ```
-
-#### Using Maven
+### Run the application
 ```bash
-mvn clean compile
+mvn compile
 mvn exec:java -Dexec.mainClass="org.example.Main"
 ```
 
-## Usage Guide
+Or simply open in IntelliJ and run `Main.java`.
 
-### Main Menu Options
-
-```
-BANK ACCOUNT MANAGEMENT - MAIN MENU
-1. Create Account
-2. View Accounts
-3. Process Transaction
-4. View Transaction History
-5. Exit
+### Run JUnit tests
+```bash
+mvn test
 ```
 
-### Creating an Account
+### Run a specific test class
+```bash
+mvn test -Dtest=AccountTest
+mvn test -Dtest=TransactionManagerTest
+mvn test -Dtest=ExceptionTest
+```
 
-1. Select option `1` from main menu
-2. Enter customer details (name, age, contact, address)
-3. Choose customer type (Regular or Premium)
-4. Choose account type (Savings or Checking)
-5. Enter initial deposit amount
-6. Receive account confirmation with account number
+---
 
-### Processing Transactions
+## Console UI Preview
 
-1. Select option `3` from main menu
-2. Enter account number
-3. Choose transaction type (Deposit or Withdrawal)
-4. Enter amount
-5. Review transaction details
-6. Confirm or cancel the transaction
+```
+==================================================
+   BANK ACCOUNT MANAGEMENT SYSTEM
+==================================================
+  Main Menu:
+  ------------------------------
+  1. Manage Accounts
+  2. Perform Transactions
+  3. Generate Account Statements
+  4. Run Tests
+  5. Exit
+==================================================
+Enter your choice: _
+```
 
-### Viewing Transaction History
+---
 
-1. Select option `4` from main menu
-2. Enter account number
-3. View complete transaction history with summary statistics
+## JUnit Test Summary
 
-## Sample Data
+| Class | Tests | Coverage |
+|-------|-------|----------|
+| `AccountTest` | 11 | Deposit, withdraw, overdraft, interest, types |
+| `TransactionManagerTest` | 9 | Deposit, withdraw, transfer, counts, totals |
+| `ExceptionTest` | 13 | All 4 exception types + ValidationUtils edge cases |
 
-The application initializes with 5 sample accounts:
+---
 
-| Account | Customer      | Type     | Customer Type | Balance     |
-|---------|---------------|----------|---------------|-------------|
-| ACC001  | John Smith    | Savings  | Regular       | $5,250.00   |
-| ACC002  | Sarah Johnson | Checking | Regular       | $3,450.00   |
-| ACC003  | Michael Chen  | Savings  | Premium       | $15,750.00  |
-| ACC004  | Emily Brown   | Checking | Regular       | $880.00     |
-| ACC005  | David Wilson  | Savings  | Premium       | $25,200.00  |
+## Git Workflow
 
-**Total Bank Balance:** $50,530.00
+See [`docs/git-workflow.md`](docs/git-workflow.md) for the full branching
+strategy, commit messages, merge instructions, and cherry-pick example.
 
-## Input Validation
+### Quick Reference
 
-- **Account Numbers:** Validated against existing accounts
-- **Amounts:** Must be positive numbers
-- **Withdrawals:** Check sufficient balance and minimum requirements
-- **Savings Withdrawals:** Ensure minimum balance ($500) is maintained
-- **Checking Withdrawals:** Allow overdraft up to limit ($1,000)
-- **Menu Choices:** Integer validation with error handling
+```bash
+# Feature branches
+git checkout -b feature/refactor
+git checkout -b feature/exceptions
+git checkout -b feature/testing
 
-## Business Rules
+# Run tests
+mvn test
 
-1. **Savings Account Withdrawals**
-   - Cannot withdraw if balance after withdrawal < $500
-   - Maintains minimum balance requirement
+# Merge into main
+git checkout main
+git merge feature/testing
+```
 
-2. **Checking Account Withdrawals**
-   - Can overdraw up to $1,000
-   - Balance can go negative within overdraft limit
+---
 
-3. **Premium Customer Benefits**
-   - Monthly fees are waived on checking accounts
-   - Higher transaction limits (not enforced in current version)
-   - Priority service designation
+## Lab 2 Checklist
 
-4. **Transaction Processing**
-   - All transactions require confirmation before finalization
-   - Failed transactions do not affect account balance
-   - Transaction history maintained chronologically
-
-
-
-
+- [x] All custom exceptions implemented
+- [x] JUnit tests created (30+ assertions across 3 test classes)
+- [x] Code refactored for clean structure (methods ≤ 25 lines, JavaDoc)
+- [x] Git workflow documented in `docs/git-workflow.md`
+- [x] README includes Git workflow and test results
+- [x] All Lab 1 features still functional
